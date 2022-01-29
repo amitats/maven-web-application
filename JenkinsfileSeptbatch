@@ -1,0 +1,41 @@
+node {
+def mavenHome = tool name: "maven3.8.3"
+
+properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')), [$class: 'JobLocalConfiguration', changeReasonComment: ''], pipelineTriggers([pollSCM('* * * * *')])])
+
+stage ('CheckOutCode')  {
+git branch: 'development', credentialsId: 'c1e2b804-b855-4a07-a3b5-8f27eff728bc', url: 'https://github.com/amitats/maven-web-application.git'
+}
+
+stage('Build') {
+sh "${mavenHome}/bin/mvn clean package"
+}
+
+
+/*
+stage ('ExecuteSonarCubeReport') {
+sh "${mavenHome}/bin/mvn sonar:sonar"
+}
+
+
+stage ('UploadArtifcatsIntoNexusRepo') {
+sh "${mavenHome}/bin/mvn deploy"
+}
+
+
+stage('DeploymentAppintoTomcatServer') {
+sshagent(['155232a3-9747-44c0-823f-325b983e625d']){
+sh "scp -o StrictHostKeyChecking=no /root/maven-web-application/target/maven-web-application.war ec2-user@18.193.114.123:/home/ec2-user/apache-tomcat-10.0.16/webapps"  
+}
+}
+
+ 
+stage ('SendEmailNotification') {
+mail bcc: '', body: '''build completed
+
+thanks''', cc: 'amitats@gmail.com', from: '', replyTo: '', subject: 'Build over', to: 'amitats@gmail.com'
+
+}
+
+*/
+}
